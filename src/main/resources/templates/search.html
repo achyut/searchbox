@@ -1,6 +1,6 @@
 
 <!doctype html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -12,24 +12,19 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
   <style>
-    body {
-        overflow-x: hidden;
-        padding-top: 55px;
-        background-color: #f0f0f0;
-    }
     h1{
-      color:teal;
+      color:#007bff;
     }
     .search-box { font-size:2em; }
     .search-button { width: 4em;}
     .btn {
-      background-color:teal !important;
-      border-color:teal !important;
+      background-color:#007bff !important;
+      border-color:#007bff !important;
       color:white !important;
     }
-    .btn:hover {background-color:teal !important;}
-    .text-success{ color: teal !important;}
-    .bg-success {background-color: teal !important;}
+    .btn:hover {background-color:#007bff !important;}
+    .text-success{ color: #007bff !important;}
+    .bg-success {background-color: #007bff !important;}
     .wrapper {
         display: flex;
     }
@@ -45,14 +40,34 @@
     .tt-selectable:hover {
       background-color:#f0f0f0 !important;
     }
+    .nav-item { font-size: 0.7em !important;}
 </style>
 
 </head>
 <body>
+<nav class="navbar navbar-expand-sm navbar-light justify-content-end">
+  <div class="collapse navbar-collapse flex-grow-0" id="navbarSupportedContent">
+    <ul class="navbar-nav text-right">
+      <li class="nav-item active">
+        <span class="nav-link">Hello <span sec:authentication="name"></span></span>
+      </li>
+      <li class="nav-item active">
+        <span class="nav-link" href="#">|</span>
+      </li>
+      <li class="nav-item active" sec:authorize="isAuthenticated()">
+        <a class="nav-link" href="javascript: document.logoutForm.submit()" role="menuitem"> Logout</a>
+        <form name="logoutForm" th:action="@{/logout}" method="post" th:hidden="true">
+          <input hidden type="submit" value="Sign Out"/>
+        </form>
+      </li>
+    </ul>
+  </div>
+</nav>
+
 
 <div class="container">
   <div class="row justify-content-center">
-    <h1 class="display-4">D<i class="fa fa-opera"></i>CUMENT FINDER</h1>
+    <h1 class="display-4">D<i class="fa fa-opera"></i>CUMENT DISCOVERY</h1>
   </div>
   <div class="row pt-5">
     <div class="col-12">
