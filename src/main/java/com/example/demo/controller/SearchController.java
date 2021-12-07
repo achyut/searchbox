@@ -1,17 +1,15 @@
 package com.example.demo.controller;
 
 import com.example.demo.model.Doc;
-import com.example.demo.model.Suggestion;
+import com.example.demo.model.GenerateDocument;
 import com.example.demo.model.SuggestionResult;
 import com.example.demo.service.SearchService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 
 @RestController
 @Slf4j
@@ -37,5 +35,13 @@ public class SearchController {
     SuggestionResult suggests = searchService.fetchSuggestions(query);
     log.debug("suggests {}",suggests);
     return suggests;
+  }
+
+
+  @PostMapping("/generate")
+  @ResponseBody
+  public GenerateDocument generate(@RequestBody  GenerateDocument generateDocument) {
+    log.debug("generate request: {}", generateDocument);
+    return searchService.generate(generateDocument);
   }
 }

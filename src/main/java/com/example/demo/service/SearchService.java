@@ -1,9 +1,11 @@
 package com.example.demo.service;
 
 import com.example.demo.model.Doc;
+import com.example.demo.model.GenerateDocument;
 import com.example.demo.model.Suggestion;
 import com.example.demo.model.SuggestionResult;
 import com.github.javafaker.Faker;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -34,5 +36,10 @@ public class SearchService {
       docs.add(doc);
     }
     return docs;
+  }
+
+  @PreAuthorize("hasRole('ROLE_ADMIN')")
+  public GenerateDocument generate(GenerateDocument generateDocument) {
+    return generateDocument;
   }
 }

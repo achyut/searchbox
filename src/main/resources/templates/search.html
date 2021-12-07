@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2" crossorigin="anonymous">
   <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jsoneditor/9.5.7/jsoneditor.min.css" integrity="sha512-KUAYxdtovjDFrnJvy5/8xWbJUUf41CIwieVmjF2dFzqLZhrdZj6urqX/0/06J+cqs5BlaZQwwwEnaShUy7LHrw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
   <style>
     h1{
@@ -41,6 +42,7 @@
       background-color:#f0f0f0 !important;
     }
     .nav-item { font-size: 0.7em !important;}
+    span.nav-link {cursor: pointer !important;}
 </style>
 
 </head>
@@ -48,13 +50,19 @@
 <nav class="navbar navbar-expand-sm navbar-light justify-content-end">
   <div class="collapse navbar-collapse flex-grow-0" id="navbarSupportedContent">
     <ul class="navbar-nav text-right">
-      <li class="nav-item active">
+      <li class="nav-item">
         <span class="nav-link">Hello <span sec:authentication="name"></span></span>
       </li>
-      <li class="nav-item active">
+      <li class="nav-item" sec:authorize="hasRole('ADMIN')">
         <span class="nav-link" href="#">|</span>
       </li>
-      <li class="nav-item active" sec:authorize="isAuthenticated()">
+      <li class="nav-item" sec:authorize="hasRole('ADMIN')">
+        <span class="nav-link" data-toggle="modal" data-target="#exampleModal">Generate Documents</span>
+      </li>
+      <li class="nav-item">
+        <span class="nav-link" href="#">|</span>
+      </li>
+      <li class="nav-item" sec:authorize="isAuthenticated()">
         <a class="nav-link" href="javascript: document.logoutForm.submit()" role="menuitem"> Logout</a>
         <form name="logoutForm" th:action="@{/logout}" method="post" th:hidden="true">
           <input hidden type="submit" value="Sign Out"/>
@@ -93,27 +101,140 @@
       </div>
     </section>
   </div>
-  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable"></div>
+
+  <!-- Modal -->
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <form id="generateForm" method="POST">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Generate Document</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div id="generateMessage">
+            </div>
+
+              <div class="form-group">
+                <label for="exampleFormControlSelect1">Document type</label>
+                <select class="form-control" id="exampleFormControlSelect1" name="docType" required>
+                  <option>Random</option>
+                  <option>Doctype1</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="exampleFormControlInput1">Number of Docs:</label>
+                <input type="number" class="form-control" id="exampleFormControlInput1" placeholder="1000" name="count" required>
+              </div>
+
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <button type="submit" class="btn btn-primary">Save changes</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Editor Modal -->
+  <div class="modal fade" id="editorModal" tabindex="-1" aria-labelledby="editorModalLabel" aria-hidden="true">
+    <div class="modal-dialog" style="max-width: 70%;" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Document: </h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <div id="jsoneditor" style="width: 100%; height: 700px;"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
 </div>
+</div>
+
+
+
 <script src="https://code.jquery.com/jquery-3.5.1.min.js"   integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0="   crossorigin="anonymous"></script>
 <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
 <script src="https://twitter.github.io/typeahead.js/releases/latest/typeahead.bundle.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jsoneditor/9.5.7/jsoneditor.min.js" integrity="sha512-AZMllTAUq+DfrIKphpa5ppBD0mZy08Orh+fDJiTYk5c6vw19I3ibbXduFt42BUQqYhKQXEVA+QLAZWw9YlO0Dw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
 <script th:inline="javascript">
     $(document).ready(function() {
+
+       var searchData = [];
+       var container = document.getElementById("jsoneditor")
+       var options = {mode:'code'}
+       var editor = new JSONEditor(container, options)
+
+        // set json
+        const initialJson = {};
+        editor.set(initialJson);
+
+     function clearForm(){
+        $("#generateForm").trigger("reset");
+      }
+
       $("#productNamedesc").focus();
-    const suggestions = new Bloodhound({
-    datumTokenizer: datum => Bloodhound.tokenizers.whitespace(datum.value),
-    queryTokenizer: Bloodhound.tokenizers.whitespace,
-    remote: {
-      wildcard: '%QUERY',
-      url: 'http://localhost:8080/suggestions?q=%QUERY',
-      transform: response => $.map(response.results, doc => ({
-        value: doc.name
-      }))
-    }
-  });
+      const suggestions = new Bloodhound({
+      datumTokenizer: datum => Bloodhound.tokenizers.whitespace(datum.value),
+      queryTokenizer: Bloodhound.tokenizers.whitespace,
+      remote: {
+        wildcard: '%QUERY',
+        url: 'http://localhost:8080/suggestions?q=%QUERY',
+        transform: response => $.map(response.results, doc => ({
+          value: doc.name
+        }))
+      }
+    });
+
+    $("#generateForm").submit(function(event){
+      var dataObj = {};
+      $("#generateForm").serializeArray().map(function(x){dataObj[x.name] = x.value;});
+      console.log(dataObj);
+      dataObj.count = parseInt(dataObj.count);
+      console.log(dataObj);
+      //$.post("http://localhost:8080/generate", dataObj,function(status, data){}, "application/json");
+
+
+      $.ajax({
+          type: "POST",
+          url: "http://localhost:8080/generate",
+          contentType: "application/json",
+          async: true,
+          data: JSON.stringify(dataObj),
+          dataType: 'json',
+          success: function(resp) {
+              $("#generateMessage").html('<div class="alert alert-success" role="alert">Successfully Generated documents!</div');
+              clearForm();
+          },
+          error: function(res, textStatus, errorThrown) {
+            console.log(res);
+            console.log(textStatus);
+            console.log(errorThrown);
+            $("#generateMessage").html('<div class="alert alert-danger" role="alert">'+res.status+' '+res.statusText+' '+res.responseJSON.error+'</div');
+          }
+      });
+
+      event.preventDefault();
+    });
+
+
+
 
   // Instantiate the Typeahead UI
  $('#the-basics .typeahead').typeahead({
@@ -148,6 +269,7 @@
 	            url: "http://localhost:8080/find?q="+inputText,
 	            async: true,
 	            success: function(resp) {
+	                searchData = resp;
 	                $("#resultRow").show();
 	                var len = resp.length;
 	                var strHtml = "";
@@ -157,16 +279,21 @@
 
                        strHTML = "";
                        for(var i=0; i<len; i++){
-                         strHTML +="<div class='card bg-transparent shadow-sm mb-3'><div class='card-body'><span class='float-right text-muted small'>11.12.2019T8:02:10.35Z</span><h5 class='card-title'><span class='badge badge-pill bg-success'>&nbsp;</span>&nbsp;"+resp[i].name+"</h5><p class='card-text'>The process completed, but the write disk is at 10% remaining. <a href='#' class='btn btn-sm align-bottom ml-3'>Details</a></p></div></div>";
+                         strHTML +="<div class='card bg-transparent shadow-sm mb-3'><div class='card-body'><span class='float-right text-muted small'>11.12.2019T8:02:10.35Z</span><h5 class='card-title'><span class='badge badge-pill bg-success'>&nbsp;</span>&nbsp;"+resp[i].name+"</h5><p class='card-text'>The process completed, but the write disk is at 10% remaining. <a href='#' class='btn btn-sm align-bottom ml-3 open-dataeditor' data-index='"+i+"' data-toggle='modal' data-target='#editorModal'>Details</a></p></div></div>";
                        }
                        //console.log(strHTML);
                        $("#results").html(strHTML)
                        $("#totalCount").html("<span class='text-success'>"+len + " matches found.</span>");
+                        $(".open-dataeditor").on('click',function(){
+                          var index = $(this).data('index');
+                          editor.update(searchData[index]);
+                        });
 
                     }
 	            }
 	        });
           }
+
 
         }
     });
